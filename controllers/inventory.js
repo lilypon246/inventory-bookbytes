@@ -1,46 +1,86 @@
 const Inventory = require('../models/inventory');
 
+// Controller untuk membuat stok produk
+async function createStock(req, res, next) {
+  const { id_product, stock } = req.body;
+  try {
+    const inventory = new Inventory({ id_product, stock });
+    await inventory.save();
+    res.json(inventory);
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Controller untuk mengurangi atau menambahkan stok produk
 async function updateStock(req, res, next) {
-    const params = req.params
-    console.log(params)
+  const productId = req.params.productId;
+  const { quantity } = req.body;
 
-    try {
-        const { quantity } = req.body;
-        const inventory = await Inventory.findById(params.productId);
-        
-        if (!inventory) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+  try {
+    const inventory = await Inventory.findOne({ id_product: productId });
 
-        inventory.stock = quantity;
-        await inventory.save();
-        res.json(inventory);
-    } catch (error) {
-        next(error);
+    if (!inventory) {
+      return res.status(404).json({ message: 'Product not found' });
     }
+
+    inventory.stock = quantity;
+    await inventory.save();
+    res.json(inventory);
+  } catch (error) {
+    next(error);
+  }
 }
 
 // Controller untuk memeriksa stok produk sebelum pembayaran
-// async function checkStock(req, res, next) {
-//     try {
-//         const { productId, quantity } = req.body;
-//         const product = await Product.findById(productId);
-        
-//         if (!product) {
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
+async function checkStock(req, res, next) {
+  const productId = req.params.productId;
 
-//         if (product.stock < quantity) {
-//             return res.status(400).json({ message: 'Insufficient stock' });
-//         }
+  try {
+    const inventory = await Inventory.findOne({ id_product: productId });
 
-//         res.json({ remainingStock: product.stock });
-//     } catch (error) {
-//         next(error);
-//     }
-// }
+    if (!inventory) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
 
-const inventoryController = { updateStock };
+    res.json({ remainingStock: product.stock });
+  } catch (error) {
+    next(error);
+  }
+}
 
-module.exports = inventoryController
+async function decreaseStock(req, res, next) {
+  const productId = req.params.productId;
+
+  try {
+    const inventory = await Inventory.findOne({ id_product: productId });
+    const remainigStock = inventory.stock;
+
+    if (remainigStock <= 0) {
+      return res.status(400).json({ message: 'Stock is empty' });
+    }
+
+    inventory.stock -= 1;
+    await inventory.save();
+    res.json(inventory);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function increaseStock(req, res, next) {
+  const productId = req.params.productId;
+
+  try {
+    const inventory = await Inventory.findOne({ id_product: productId });
+    inventory.stock += 1;
+    await inventory.save();
+    res.json(inventory);
+  } catch (error) {
+    next(error);
+  }
+}
+
+const inventoryController = { createStock, updateStock, checkStock, decreaseStock, increaseStock };
+
+module.exports = inventoryController;

@@ -1,11 +1,11 @@
 const express = require('express');
-const productController = require('../controllers/inventory.js');
+const inventoryController = require('../controllers/inventory.js');
 const router = express.Router();
 
-// Middleware untuk verifikasi token dapat ditambahkan di sini jika diperlukan
-
-// Routes
-router.post('/products/:productId', productController.updateStock);
-// router.get('/products/:productId', productController.checkStock);
+router.get('/products/:productId', inventoryController.checkStock);
+router.post('/products', inventoryController.createStock);
+router.put('/products/:productId', inventoryController.updateStock);
+router.get('/products/:productId/decrease-stock', inventoryController.decreaseStock);
+router.get('/products/:productId/increase-stock', inventoryController.increaseStock);
 
 module.exports = router;
