@@ -1,5 +1,14 @@
 const Inventory = require('../models/inventory');
 
+async function getAllStocks(req, res, next) {
+  try {
+    const stocks = await Inventory.find();
+    res.json(stocks);
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Controller untuk membuat stok produk
 async function createStock(req, res, next) {
   const { id_product, stock } = req.body;
@@ -81,6 +90,13 @@ async function increaseStock(req, res, next) {
   }
 }
 
-const inventoryController = { createStock, updateStock, checkStock, decreaseStock, increaseStock };
+const inventoryController = {
+  getAllStocks,
+  createStock,
+  updateStock,
+  checkStock,
+  decreaseStock,
+  increaseStock,
+};
 
 module.exports = inventoryController;
