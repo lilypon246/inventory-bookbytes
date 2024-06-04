@@ -2,6 +2,7 @@ const express = require('express');
 const inventoryController = require('../controllers/inventory.js');
 const router = express.Router();
 
+router.get('/', inventoryController.getAllInventory);
 router.get('/stocks', inventoryController.getAllStocks);
 router.get('/stocks/:productId', inventoryController.checkStock);
 router.post('/stocks', inventoryController.createStock);

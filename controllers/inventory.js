@@ -1,4 +1,14 @@
 const Inventory = require('../models/inventory');
+const Book = require("../models/bookModel");
+
+async function getAllInventory(req, res, next) {
+  try {
+    const book = await Book.find();
+    res.status(200).json(book);
+  } catch (error) {
+    next(error);
+  }
+}
 
 async function getAllStocks(req, res, next) {
   try {
@@ -97,6 +107,7 @@ const inventoryController = {
   checkStock,
   decreaseStock,
   increaseStock,
+  getAllInventory
 };
 
 module.exports = inventoryController;
